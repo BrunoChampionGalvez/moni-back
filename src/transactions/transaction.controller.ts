@@ -57,6 +57,19 @@ export class TransactionController {
     );
   }
 
+  @Get('category-trend')
+  async getCategoryTrend(
+    @Req() req: any,
+    @Query('category') category: string,
+    @Query('days', new ParseIntPipe({ optional: true })) days?: number,
+  ) {
+    return this.transactionService.getCategoryTrend(
+      req.user.userId,
+      category as TransactionCategory,
+      days || 30,
+    );
+  }
+
   @Post('process-emails')
   async processEmails(@Req() req: any) {
     return this.transactionService.processEmailsForUser(req.user.userId);

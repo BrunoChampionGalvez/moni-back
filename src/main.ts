@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { SeederService } from './seeder/seeder.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,6 +19,17 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  // Run seeder in development mode
+  if (process.env.NODE_ENV === 'development') {
+    const seederService = app.get(SeederService);
+    try {
+      const result = await seederService.seed();
+      console.log('🌱 Seeder:', result.message);
+    } catch (error) {
+      console.error('❌ Seeder error:', error.message);
+    }
+  }
 
   const port = process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0');

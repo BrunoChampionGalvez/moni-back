@@ -13,6 +13,7 @@ import { GmailModule } from './gmail/gmail.module';
 import { OpenAIModule } from './openai/openai.module';
 import { TransactionModule } from './transactions/transaction.module';
 import { CronModule } from './cron/cron.module';
+import { SeederModule } from './seeder/seeder.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CronModule } from './cron/cron.module';
         entities: [User, Transaction, RefreshToken],
         synchronize: configService.get('NODE_ENV') === 'development',
         logging: configService.get('NODE_ENV') === 'development',
+        dropSchema: false,
       }),
       inject: [ConfigService],
     }),
@@ -42,6 +44,7 @@ import { CronModule } from './cron/cron.module';
     OpenAIModule,
     TransactionModule,
     CronModule,
+    SeederModule,
   ],
   controllers: [AppController],
   providers: [AppService],

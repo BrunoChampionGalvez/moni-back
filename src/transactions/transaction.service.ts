@@ -186,4 +186,31 @@ export class TransactionService {
       total: parseFloat(t.total),
     }));
   }
+
+  async getCategoryTrend(
+    userId: string,
+    category: TransactionCategory,
+    days: number = 30,
+  ) {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    const transactions = await this.transactionRepository
+      .createQueryBuilder('transaction')
+      .select('DATE(transaction.date)', 'date')
+      .addSelect('SUM(transaction.amount)', 'total')
+      .where('transaction.userId = :userId', { userId })
+      .andWhere('transaction.category = :category', { category })
+      .andWhere('transaction.date >= :startDate', { startDate })
+      .andWhere('transaction.date <= :endDate', { endDate })
+      .groupBy('DATE(transaction.date)')
+      .orderBy('date', 'ASC')
+      .getRawMany();
+
+    return transactions.map((t) => ({
+      date: t.date,
+      total: parseFloat(t.total),
+    }));
+  }
 }
