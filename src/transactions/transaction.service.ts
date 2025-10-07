@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between, In } from 'typeorm';
 import { Transaction, TransactionCategory } from '../entities/transaction.entity';
 import { User } from '../entities/user.entity';
-import { GmailService } from '../gmail/gmail.service';
+import { GmailCentralizedService } from '../gmail/gmail-centralized.service';
 import { OpenAIService } from '../openai/openai.service';
 
 @Injectable()
@@ -13,17 +13,19 @@ export class TransactionService {
     private transactionRepository: Repository<Transaction>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private gmailService: GmailService,
+    private gmailCentralizedService: GmailCentralizedService,
     private openaiService: OpenAIService,
   ) {}
 
-  async processEmailsForUser(userId: string) {
+  async processEmailsForUser(userId: string, emails?: any[]) {
     try {
       const user = await this.userRepository.findOne({ where: { id: userId } });
       if (!user) return;
 
-      // Fetch today's emails
-      const emails: any[] = await this.gmailService.getTodaysEmails(userId);
+      // Fetch emails if not provided
+      if (!emails || emails.length === 0) {
+        emails = await this.gmailCentralizedService.getTodaysUserEmails(userId);
+      }
 
       let processedCount = 0;
 
@@ -61,8 +63,7 @@ export class TransactionService {
           userId,
           amount: expenseData.amount,
           local: expenseData.local,
-          actualLocal: categorized.actualLocal,
-          category: categorized.category as TransactionCategory,
+          category: categorized as TransactionCategory,
           bank: expenseData.bank,
           paymentMethod: expenseData.paymentMethod,
           date: expenseData.date ? new Date(expenseData.date) : new Date(email.date),

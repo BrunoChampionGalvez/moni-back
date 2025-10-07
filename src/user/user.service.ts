@@ -25,7 +25,6 @@ export class UserService {
       currency: user.currency,
       monthlyBudget: user.monthlyBudget,
       budgetNotificationThreshold: user.budgetNotificationThreshold,
-      hasGmailConnected: !!user.gmailRefreshToken,
     };
   }
 

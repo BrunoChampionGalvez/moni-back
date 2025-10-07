@@ -21,7 +21,7 @@ export class SeederService {
 
     // Check if seeding has already been done
     const existingUser = await this.userRepository.findOne({
-      where: { email: 'brunochampiongalvez@gmail.com' },
+      where: { email: 'bruno@mail.com' },
     });
 
     if (existingUser) {
@@ -47,7 +47,7 @@ export class SeederService {
     } else {
       const hashedPassword = await bcrypt.hash('Test*1234!', 10);
       user = this.userRepository.create({
-        email: 'brunochampiongalvez@gmail.com',
+        email: 'bruno@mail.com',
         password: hashedPassword,
         country: 'Peru',
         currency: 'PEN',
@@ -77,7 +77,7 @@ export class SeederService {
 
     // Find user
     const existingUser = await this.userRepository.findOne({
-      where: { email: 'brunochampiongalvez@gmail.com' },
+      where: { email: 'bruno@mail.com' },
     });
 
     if (!existingUser) {

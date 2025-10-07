@@ -24,9 +24,6 @@ export class User {
   @Column({ type: 'int', default: 80 })
   budgetNotificationThreshold: number; // Percentage (0-100)
 
-  @Column({ nullable: true })
-  gmailRefreshToken: string;
-
   @Column({ default: true })
   isActive: boolean;
 
